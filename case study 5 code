@@ -1,0 +1,36 @@
+import java.util.*;
+
+class SortStreamMS {
+    static int comparisons = 0;
+
+    static void mergeSort(int[] arr, int left, int right) {
+        if (left >= right) return;          // base case: single element
+        int mid = (left + right) / 2;
+        mergeSort(arr, left, mid);          // sort left half
+        mergeSort(arr, mid + 1, right);     // sort right half
+        merge(arr, left, mid, right);       // merge sorted halves
+    }
+
+    static void merge(int[] arr, int left, int mid, int right) {
+        int n1 = mid - left + 1;
+        int n2 = right - mid;
+        int[] L = Arrays.copyOfRange(arr, left, mid + 1);
+        int[] R = Arrays.copyOfRange(arr, mid + 1, right + 1);
+        int i = 0, j = 0, k = left;
+        while (i < n1 && j < n2) {
+            comparisons++;
+            if (L[i] <= R[j]) arr[k++] = L[i++];   // stable: prefer L on tie
+            else              arr[k++] = R[j++];
+        }
+        while (i < n1) arr[k++] = L[i++];   // copy remaining left
+        while (j < n2) arr[k++] = R[j++];   // copy remaining right
+    }
+
+    public static void main(String[] args) {
+        int[] scores = {38, 27, 43, 3, 9, 82, 10, 1};
+        mergeSort(scores, 0, scores.length - 1);
+        System.out.println("Sorted: " + Arrays.toString(scores));
+        System.out.println("Comparisons: " + comparisons);
+    }
+}
+
