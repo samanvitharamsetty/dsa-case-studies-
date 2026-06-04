@@ -1,0 +1,36 @@
+import java.util.*;
+
+class RouteOptimizerMST {
+    static int[] parent, rank;
+
+    static int find(int x) {
+        if (parent[x] != x) parent[x] = find(parent[x]); // path compression
+        return parent[x];
+    }
+
+    static boolean union(int a, int b) {
+        int ra = find(a), rb = find(b);
+        if (ra == rb) return false;  // same component — cycle
+        if (rank[ra] < rank[rb]) parent[ra] = rb;
+        else if (rank[ra] > rank[rb]) parent[rb] = ra;
+        else { parent[rb] = ra; rank[ra]++; }
+        return true;
+    }
+
+    public static int kruskal(int V, int[][] edges) {
+        // edges[i] = {cost, u, v}
+        Arrays.sort(edges, (a, b) -> a[0] - b[0]);
+        parent = new int[V]; rank = new int[V];
+        for (int i = 0; i < V; i++) parent[i] = i;
+
+        int mstCost = 0, edgesUsed = 0;
+        for (int[] e : edges) {
+            if (union(e[1], e[2])) {
+                mstCost += e[0];
+                System.out.println("Add edge " + e[1] + "-" + e[2] + " cost " + e[0]);
+                if (++edgesUsed == V - 1) break;  // MST complete
+            }
+        }
+        return mstCost;
+    }
+}
